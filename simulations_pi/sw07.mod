@@ -88,7 +88,7 @@ var labobs      ${lHOURS}$      (long_name='log hours worked')
     inve        ${i}$           (long_name='Investment')
     y           ${y}$           (long_name='Output')
     lab         ${l}$           (long_name='hours worked')
-    pinf        ${\pi}$         (long_name='Inflation')
+    pi        ${\pi}$         (long_name='Inflation')
     w           ${w}$           (long_name='real wage')
     r           ${r}$           (long_name='real interest rate')
     a           ${\varepsilon_a}$       (long_name='productivity process')
@@ -100,13 +100,15 @@ var labobs      ${lHOURS}$      (long_name='log hours worked')
     sw          ${\varepsilon^w}$       (long_name='Wage markup shock process')
     kpf         ${k^{flex}}$            (long_name='Capital stock flex price economy') 
     kp          ${k}$           (long_name='Capital stock') 
+    y_gap
+    i
     ;    
  
-varexo ea       ${\eta^a}$      (long_name='productivity shock')
+varexo tfp_shock       ${\eta^a}$      (long_name='productivity shock')
     eb          ${\eta^b}$      (long_name='Investment-specific technology shock')
     eg          ${\eta^g}$      (long_name='Spending shock')
     eqs         ${\eta^i}$      (long_name='Investment-specific technology shock')
-    em          ${\eta^m}$      (long_name='Monetary policy shock')
+    mp_shock          ${\eta^m}$      (long_name='Monetary policy shock')
     epinf       ${\eta^{p}}$    (long_name='Price markup shock')  
     ew          ${\eta^{w}}$    (long_name='Wage markup shock')  
         ;  
@@ -259,7 +261,7 @@ model(linear);
           [name='Investment Euler Equation, SW Equation (3)']
 	      inve = (1/(1+cbetabar*cgamma))* (inve(-1) + cbetabar*cgamma*inve(1)+(1/(cgamma^2*csadjcost))*pk ) +qs ;
           [name='Arbitrage equation value of capital, SW Equation (4)']
-          pk = -r+pinf(1)-0*b 
+          pk = -r+pi(1)-0*b 
                 + (1/((1-chabb/cgamma)/(csigma*(1+chabb/cgamma))))*b 
                 + (crk/(crk+(1-ctou)))*rk(1) 
                 + ((1-ctou)/(crk+(1-ctou)))*pk(1) ;
@@ -267,39 +269,39 @@ model(linear);
 	      c = (chabb/cgamma)/(1+chabb/cgamma)*c(-1) 
                 + (1/(1+chabb/cgamma))*c(+1) 
                 +((csigma-1)*cwhlc/(csigma*(1+chabb/cgamma)))*(lab-lab(+1)) 
-                - (1-chabb/cgamma)/(csigma*(1+chabb/cgamma))*(r-pinf(+1) + 0*b) +b ;
+                - (1-chabb/cgamma)/(csigma*(1+chabb/cgamma))*(r-pi(+1) + 0*b) +b ;
 	      [name='Aggregate Resource Constraint, SW Equation (1)']
           y = ccy*c+ciy*inve+g  +  1*crkky*zcap ;
           [name='Aggregate Production Function, SW Equation (5)']
 	      y = cfc*( calfa*k+(1-calfa)*lab +a );
           [name='New Keynesian Phillips Curve, SW Equation (10)']
-	      pinf =  (1/(1+cbetabar*cgamma*cindp)) * ( cbetabar*cgamma*pinf(1) +cindp*pinf(-1) 
+	      pi =  (1/(1+cbetabar*cgamma*cindp)) * ( cbetabar*cgamma*pi(1) +cindp*pi(-1) 
                +((1-cprobp)*(1-cbetabar*cgamma*cprobp)/cprobp)/((cfc-1)*curvp+1)*(mc)  )  + spinf ; 
 	      [name='Wage Phillips Curve, SW Equation (13), with (12) plugged for mu_w']
           w =  (1/(1+cbetabar*cgamma))*w(-1)
                +(cbetabar*cgamma/(1+cbetabar*cgamma))*w(1)
-               +(cindw/(1+cbetabar*cgamma))*pinf(-1)
-               -(1+cbetabar*cgamma*cindw)/(1+cbetabar*cgamma)*pinf
-               +(cbetabar*cgamma)/(1+cbetabar*cgamma)*pinf(1)
+               +(cindw/(1+cbetabar*cgamma))*pi(-1)
+               -(1+cbetabar*cgamma*cindw)/(1+cbetabar*cgamma)*pi
+               +(cbetabar*cgamma)/(1+cbetabar*cgamma)*pi(1)
                +(1-cprobw)*(1-cbetabar*cgamma*cprobw)/((1+cbetabar*cgamma)*cprobw)*(1/((clandaw-1)*curvw+1))*
                (csigl*lab + (1/(1-chabb/cgamma))*c - ((chabb/cgamma)/(1-chabb/cgamma))*c(-1) -w) 
                + 1*sw ;
           [name='Taylor rule, SW Equation (14)']
-	      r =  crpi*(1-crr)*pinf
+	      r =  crpi*(1-crr)*pi
                +cry*(1-crr)*(y-yf)     
                +crdy*(y-yf-y(-1)+yf(-1))
                +crr*r(-1)
                +ms  ;
           [name='Law of motion for productivity']              
-	      a = crhoa*a(-1)  + ea;
+	      a = crhoa*a(-1)  + tfp_shock;
           [name='Law of motion for risk premium']              
 	      b = crhob*b(-1) + eb;
           [name='Law of motion for spending process']              
-	      g = crhog*(g(-1)) + eg + cgy*ea;
+	      g = crhog*(g(-1)) + eg + cgy*tfp_shock;
 	      [name='Law of motion for investment specific technology shock process']              
           qs = crhoqs*qs(-1) + eqs;
           [name='Law of motion for monetary policy shock process']              
-	      ms = crhoms*ms(-1) + em;
+	      ms = crhoms*ms(-1) + mp_shock;
           [name='Law of motion for price markup shock process']              
 	      spinf = crhopinf*spinf(-1) + epinfma - cmap*epinfma(-1);
 	          epinfma=epinf;
@@ -319,12 +321,15 @@ dinve=inve-inve(-1)+ctrend;
 [name='Observation equation real wage']              
 dw=w-w(-1)+ctrend;
 [name='Observation equation inflation']              
-pinfobs = 1*(pinf) + constepinf;
+pinfobs = 1*(pi) + constepinf;
 [name='Observation equation interest rate']              
 robs =    1*(r) + conster;
 [name='Observation equation hours worked']              
 labobs = lab + constelab;
 
+% add output gap & nominal interest rate
+y_gap = y - y-yf;
+i = r + pi(1);
 end; 
 
 steady_state_model;
@@ -341,7 +346,7 @@ shocks;
 
 % keeps all shocks that move the model
 @#if flag_shock == 0
-  var ea;
+  var tfp_shock;
   stderr 0.4618;
   var eb;
   stderr 1.8513;
@@ -349,7 +354,7 @@ shocks;
   stderr 0.6090;
   var eqs;
   stderr 0.6017;
-  var em;
+  var mp_shock;
   stderr 0.2397;
   var epinf;
   stderr 0.1455;
@@ -359,7 +364,7 @@ shocks;
 
 % turn off all shocks but those in other models too
 @#if flag_shock == 1
-  var ea;
+  var tfp_shock;
   stderr 1;
   var eb;
   stderr 0;
@@ -367,7 +372,7 @@ shocks;
   stderr 0;
   var eqs;
   stderr 0;
-  var em;
+  var mp_shock;
   stderr .25^2;
   var epinf;
   stderr 0;
@@ -378,70 +383,31 @@ shocks;
 end;
 
 
-estimated_params;
-// PARAM NAME, INITVAL, LB, UB, PRIOR_SHAPE, PRIOR_P1, PRIOR_P2, PRIOR_P3, PRIOR_P4, JSCALE
-// PRIOR_SHAPE: BETA_PDF, GAMMA_PDF, NORMAL_PDF, INV_GAMMA_PDF
-stderr ea,0.4618,0.01,3,INV_GAMMA_PDF,0.1,2;
-stderr eb,0.1818513,0.025,5,INV_GAMMA_PDF,0.1,2;
-stderr eg,0.6090,0.01,3,INV_GAMMA_PDF,0.1,2;
-stderr eqs,0.46017,0.01,3,INV_GAMMA_PDF,0.1,2;
-stderr em,0.2397,0.01,3,INV_GAMMA_PDF,0.1,2;
-stderr epinf,0.1455,0.01,3,INV_GAMMA_PDF,0.1,2;
-stderr ew,0.2089,0.01,3,INV_GAMMA_PDF,0.1,2;
-crhoa,.9676 ,.01,.9999,BETA_PDF,0.5,0.20;
-crhob,.2703,.01,.9999,BETA_PDF,0.5,0.20;
-crhog,.9930,.01,.9999,BETA_PDF,0.5,0.20;
-crhoqs,.5724,.01,.9999,BETA_PDF,0.5,0.20;
-crhoms,.3,.01,.9999,BETA_PDF,0.5,0.20;
-crhopinf,.8692,.01,.9999,BETA_PDF,0.5,0.20;
-crhow,.9546,.001,.9999,BETA_PDF,0.5,0.20;
-cmap,.7652,0.01,.9999,BETA_PDF,0.5,0.2;
-cmaw,.8936,0.01,.9999,BETA_PDF,0.5,0.2;
-csadjcost,6.3325,2,15,NORMAL_PDF,4,1.5;
-csigma,1.2312,0.25,3,NORMAL_PDF,1.50,0.375;
-chabb,0.7205,0.001,0.99,BETA_PDF,0.7,0.1;
-cprobw,0.7937,0.3,0.95,BETA_PDF,0.5,0.1;
-csigl,2.8401,0.25,10,NORMAL_PDF,2,0.75;
-cprobp,0.7813,0.5,0.95,BETA_PDF,0.5,0.10;
-cindw,0.4425,0.01,0.99,BETA_PDF,0.5,0.15;
-cindp,0.3291,0.01,0.99,BETA_PDF,0.5,0.15;
-czcap,0.2648,0.01,1,BETA_PDF,0.5,0.15;
-cfc,1.4672,1.0,3,NORMAL_PDF,1.25,0.125;
-crpi,1.7985,1.0,3,NORMAL_PDF,1.5,0.25;
-crr,0.8258,0.5,0.975,BETA_PDF,0.75,0.10;
-cry,0.0893,0.001,0.5,NORMAL_PDF,0.125,0.05;
-crdy,0.2239,0.001,0.5,NORMAL_PDF,0.125,0.05;
-constepinf,0.7,0.1,2.0,GAMMA_PDF,0.625,0.1;//20;
-constebeta,0.7420,0.01,2.0,GAMMA_PDF,0.25,0.1;//0.20;
-constelab,1.2918,-10.0,10.0,NORMAL_PDF,0.0,2.0;
-ctrend,0.3982,0.1,0.8,NORMAL_PDF,0.4,0.10;
-cgy,0.05,0.01,2.0,NORMAL_PDF,0.5,0.25;
-calfa,0.24,0.01,1.0,NORMAL_PDF,0.3,0.05;
-end;
-
-varobs dy dc dinve labobs pinfobs dw robs;
-
-estimation(optim=('MaxIter',200),
-		   datafile=usmodel_data,
-		   mode_file=usmodel_shock_decomp_mode,
-		   mode_compute=0,
-		   first_obs=1,
-		   presample=4,
-		   lik_init=2,
-		   prefilter=0,
-		   mh_replic=0,
-		   mh_nblocks=2,
-		   mh_jscale=0.20,
-		   mh_drop=0.2,
-		   nograph,
-		   nodiagnostic);
-
 stoch_simul(order = 1,
             solve_algo = 2,
             irf=30,
             periods = 500000,
             drop = 100000,
-            replic = 2500);
+            replic = 2500) y_gap pi i r;
 
 verbatim;
-save('pinf', 'pinf', '-v6');
+
+modna = 'sw';
+verna='07';
+
+%% Save IRFs data
+irf_names = fieldnames(oo_.irfs);
+irf_data = oo_.irfs;
+
+save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
+save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');
+
+%% Save simulations
+sim_names = [M_.endo_names;
+             M_.exo_names];
+sim_data = [oo_.endo_simul',oo_.exo_simul];
+
+save(strcat('./',modna,verna,'_sim_names'), 'sim_names', '-v6');
+save(strcat('./',modna,verna,'_sim_data'), 'sim_data', '-v6');
+
+clear irf_names irf_data sim_data sim_names modna verna;

@@ -65,7 +65,7 @@
 set_dynare_seed(240588);
 
 var y $y$ //output
-    i $i$ //investment
+    i $i$ //nominal interest rate
     pi $\pi$ //inflation
     N $N$ //hours worked
     w $w$ //real wage
@@ -85,7 +85,7 @@ var y $y$ //output
     price_adjustment_gap
     y_gap;
 
-varexo e_v e_a e_zeta;
+varexo mp_shock tfp_shock e_zeta;
 
 parameters trend_inflation 
     beta $\beta$ //discount factor 
@@ -179,9 +179,9 @@ exp(real_interest)=(1+exp(i))/(exp(pi(+1)));
 Utility=y-d_n*exp(zeta)*exp(N)^(1+phi_par)/(1+phi_par)+beta*Utility(+1);
 // Utility=exp(y)^(1-sigma)/(1-sigma)-d_n*exp(zeta)*exp(N)^(1+phi_par)/(1+phi_par)+beta*Utility(+1);
 //13. Monetary shock
-v = rho_v*v(-1) + e_v;
+v = rho_v*v(-1) + mp_shock;
 //14. Technology shock
-A = rho_a*A(-1) + e_a;
+A = rho_a*A(-1) + tfp_shock;
 //15. Preference shock
 zeta = rho_zeta*zeta(-1) + e_zeta;
 
@@ -241,8 +241,8 @@ steady;
 check;
 
 shocks;          
-var e_v; stderr 1;   
-var e_a=0.25^2;
+var mp_shock; stderr 1;   
+var tfp_shock=0.25^2;
 var e_zeta; stderr 0;
 end;
 
@@ -251,7 +251,25 @@ stoch_simul(order=1,
 			irf = 30,
 			periods = 500000,
 			drop = 100000,
-			replic = 2500) y_gap pi;
+			replic = 2500) y_gap pi i real_interest;
 
 verbatim;
-save('ascardone_pi', 'pi', '-v6');
+modna = 'ascardone';
+verna = '14';
+
+%% Save IRFs data
+irf_names = fieldnames(oo_.irfs);
+irf_data = oo_.irfs;
+
+save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
+save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');
+
+%% Save simulations
+sim_names = [M_.endo_names;
+             M_.exo_names];
+sim_data = [oo_.endo_simul',oo_.exo_simul];
+
+save(strcat('./',modna,verna,'_sim_names'), 'sim_names', '-v6');
+save(strcat('./',modna,verna,'_sim_data'), 'sim_data', '-v6');
+
+clear irf_names irf_data sim_data sim_names modna verna;

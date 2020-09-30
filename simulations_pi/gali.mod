@@ -168,7 +168,7 @@ check;
 stoch_simul(order = 1,
             solve_algo = 2,
             irf=30,
-            periods = 600000,
+            periods = 500000,
             drop = 100000,
             replic = 2500) y_gap pi i;
 
@@ -189,8 +189,19 @@ modna = 'gali_';
 @#endif
 
 
+%% Save IRFs data
 irf_names = fieldnames(oo_.irfs);
 irf_data = oo_.irfs;
 
 save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
 save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');
+
+%% Save simulations
+sim_names = [M_.endo_names;
+             M_.exo_names];
+sim_data = [oo_.endo_simul',oo_.exo_simul]
+
+save(strcat('./',modna,verna,'_sim_names'), 'sim_names', '-v6');
+save(strcat('./',modna,verna,'_sim_data'), 'sim_data', '-v6');
+
+clear irf_names irf_data sim_data sim_names modna verna;

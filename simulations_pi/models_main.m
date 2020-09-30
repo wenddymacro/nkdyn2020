@@ -20,32 +20,32 @@
  
 clc; clear all;
 
-%%%%% NKDSGE, standard calibration %%%%%%%%
-dynare gali_recalib.mod nograph nolog -Dflag_gali=0;
+%% Simulations of Gali (2015) standard NKDSGE
 
-%%%%% other DSGEs %%%%%%%
-dynare sw07.mod nograph nolog -Dflag_shock=1;
+% standard calibration
+dynare gali.mod nograph nolog -Dflag_gali=0;
+% almost passive MP
+dynare gali.mod nograph nolog -Dflag_gali=1 fast;
+% radically aggressive MP
+dynare gali.mod nograph nolog -Dflag_gali=2 fast;
+
+%% Liquidity model
+
+% Aggressive MP
+dynare liq_dsge.mod nograph nolog -Dz_flag=0 -Dcalibras=0;
+% Passive MP
+dynare liq_dsge.mod nograph nolog -Dz_flag=0 -Dcalibras=1 fast;
+% Liquidity dryup, aggressive MP
+dynare liq_dsge.mod nograph nolog -Dz_flag=1 -Dcalibras=0 fast;
+% Liquidity dryup, passive MP
+dynare liq_dsge.mod nograph nolog -Dz_flag=1 -Dcalibras=1 fast;
+
+%% Simulate Ascari & Sbordone (2014)
 dynare ascardone14.mod nograph nolog;
 
+%% Simulate Smets & Wouters (2007)
+dynare sw07.mod nolog nograph -Dflag_shock=1;
 
-%%%%%% Liquidity DSGE, two calibrations: %%%%%%%
-% aggressive CB
-dynare nkdtc.mod nograph nolog -Dcalibras=0 -Dz_flag=0;
-% accommodative CB
-dynare nkdtc.mod nograph nolog -Dcalibras=1 -Dz_flag=0;
-
-
-
-% add z_flag with only z shock to plot irfs
-% or call direclty z_graph
-run z_graph.m;
-
-
-%%%%%% NKDSGE model with multiple calibrations %%%%%%
-%%%%%% IRFs
-
-% I - NKDSGE with almost accommodative CB
-dynare gali_recalib.mod -Dflag_gali=1 nograph nolog fast;
-
-% II - NKDSGE with insanely aggressive CB
-dynare gali_recalib.mod -Dflag_gali=2 nograph nolog fast;
+%% cleanup folders
+mdls = {'gali', 'liq_dsge', 'ascardone14', 'sw07'};
+rmdir([mdls; strcat('+', mdls)], 's');
