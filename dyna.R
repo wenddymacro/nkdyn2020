@@ -1,5 +1,5 @@
 #### R code for inflation dynamics 
-# Most of the code is an adptation
+# Most of the code is an adaptation
 # from the script used with real data
 # in the empirical section of the paper
 

@@ -41,7 +41,7 @@ var z y m pi s tfp e_mp b y_gap;
 predetermined_variables z;
 
 % exogenous variables
-varexo e_ee e_pc e_tfp e_e_mp e_z;
+varexo e_ee e_pc tpf_shock mp_shock e_z;
 
 % Parameters of the model,
 % to map into standard params
@@ -138,10 +138,10 @@ s=theta*pi(+1) + e_mp;
 
 
 % AR for technology
-tfp=(1-rho_tfp)*tfpbar + rho_tfp*tfp(-1) + e_tfp;
+tfp=(1-rho_tfp)*tfpbar + rho_tfp*tfp(-1) + tpf_shock;
 
 % AR for Mon Pol shocks
-e_mp=rho_mp*e_mp(-1) + e_e_mp;
+e_mp=rho_mp*e_mp(-1) + mp_shock;
 
 % ygap
 y_gap=(y - flex*tfp);
@@ -163,10 +163,10 @@ var e_pc; 	stderr .000;
 % regulars shocks
 @#if z_flag != 1
 % TFP shock
-var e_tfp;	stderr 1; % for non-standard-size shock
+var tpf_shock;	stderr 1; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
-var e_e_mp; 	stderr 0.25^2;
+var mp_shock; 	stderr 0.25^2;
 
 % Real liq. shock
 var e_z; 		stderr 0;
@@ -177,10 +177,10 @@ var e_z; 		stderr 0;
 % shock to z
 @#if z_flag == 1
 % TFP shock
-var e_tfp;	stderr 0; % for non-standard-size shock
+var tpf_shock;	stderr 0; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
-var e_e_mp; 	stderr 0;
+var mp_shock; 	stderr 0;
 
 % Real liq. shock
 var e_z; 		stderr 10;
@@ -196,22 +196,29 @@ check;
 stoch_simul(order=1, 		% approx order			
 			solve_algo=2, 	% solving algorithm			
 			irf=30,			% IRFs horizon			
-			periods=500000, % iterations to simulate
+			periods=600000, % iterations to simulate
 			drop=100000, 	% burn-in drop			
 			replic=2500)		% IRF iterations
 			y_gap pi s m z b;   % vars to plot
 
+modna = 'liq_';
 
 @#if z_flag != 1
 
 @#if calibras == 0
-	save('nkdtc_pi_tp.mat', 'pi', '-v6');
+	verna = 'tp';
 @#endif
 
 @#if calibras == 1
-	save('nkdtc_pi_notp.mat', 'pi', '-v6');
+	verna = 'notp';
 @#endif
 
+
+irf_names = fieldnames(oo_.irfs);
+irf_data = oo_.irfs;
+
+save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
+save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');
 
 verbatim;
 len=options_.irf;
@@ -220,7 +227,7 @@ len=options_.irf;
 irf_tfp = figure('Name', 'TFP shock - selected variables', 'visible', 'off');
 
 subplot(3,1,1);
-plot(oo_.irfs.y_gap_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.y_gap_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.6 .1]);
@@ -229,7 +236,7 @@ hold off;
 
 
 subplot(3,1,2);
-plot(oo_.irfs.pi_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.pi_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.25 .05]);
@@ -237,7 +244,7 @@ ylabel('Inflation');
 hold off;
 
 subplot(3,1,3);
-plot(oo_.irfs.s_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.s_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.4 .05]);
@@ -250,7 +257,7 @@ hold off;
 irf_mon = figure('Name', 'Monetary policy shock - selected variables', 'visible', 'off');
 
 subplot(3,1,1);
-plot(oo_.irfs.y_gap_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.y_gap_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.2 .025]);
@@ -259,7 +266,7 @@ hold off;
 
 
 subplot(3,1,2);
-plot(oo_.irfs.pi_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.pi_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.1 .05]);
@@ -267,7 +274,7 @@ ylabel('Inflation');
 hold off;
 
 subplot(3,1,3);
-plot(oo_.irfs.s_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.s_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf 0 .15]);							
@@ -279,7 +286,7 @@ hold off;
 irf_tfp_allvar = figure('Name', 'TFP shock - all variables', 'visible', 'off');
 
 subplot(3,2,1);
-plot(oo_.irfs.y_gap_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.y_gap_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.4 .05]);
@@ -288,7 +295,7 @@ hold off;
 
 
 subplot(3,2,2);
-plot(oo_.irfs.pi_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.pi_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.2 .025]);
@@ -296,7 +303,7 @@ ylabel('Inflation');
 hold off;
 
 subplot(3,2,3);
-plot(oo_.irfs.s_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.s_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.1 .05]); 								
@@ -304,21 +311,21 @@ ylabel('Interest rate');
 hold off;
 
 subplot(3,2,4);
-plot(oo_.irfs.m_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.m_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -0.2 2]);								
 ylabel('Money holdings');
 
 subplot(3,2,5);
-plot(oo_.irfs.b_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.b_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -1.25 .5]);								
 ylabel('Bonds');
 
 subplot(3,2,6);
-plot(oo_.irfs.z_e_tfp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.z_tpf_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf 0 .2]);
@@ -331,7 +338,7 @@ ylabel('Real liquidity');
 irf_mp_allvar = figure('Name', 'Monetary policy shock - all variables', 'visible', 'off');
 
 subplot(3,2,1);
-plot(oo_.irfs.y_gap_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.y_gap_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.2 .015]);
@@ -340,7 +347,7 @@ hold off;
 
 
 subplot(3,2,2);
-plot(oo_.irfs.pi_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.pi_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -.1 .015]);
@@ -348,7 +355,7 @@ ylabel('Inflation');
 hold off;
 
 subplot(3,2,3);
-plot(oo_.irfs.s_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.s_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf 0 .05]);
@@ -356,21 +363,21 @@ ylabel('Interest rate');
 hold off;
 
 subplot(3,2,4);
-plot(oo_.irfs.m_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.m_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf -1 .1]);
 ylabel('Money holdings');
 
 subplot(3,2,5);
-plot(oo_.irfs.b_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.b_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf 0 .5]);
 ylabel('Bonds');
 
 subplot(3,2,6);
-plot(oo_.irfs.z_e_e_mp, 'black', 'LineWidth', 1);
+plot(oo_.irfs.z_mp_shock, 'black', 'LineWidth', 1);
 hold on;
 line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
 axis([1 inf 0 .1]);

@@ -1,5 +1,5 @@
 /*
- * This file implements the baseline New Keynesian model of Jordi Gal� (2008): Monetary Policy, Inflation,
+ * This file implements the baseline New Keynesian model of Jordi Gal? (2008): Monetary Policy, Inflation,
  * and the Business Cycle, Princeton University Press, Chapter 3
  *
  * Note that all model variables are expressed in deviations from steady state, i.e. in contrast to
@@ -51,8 +51,8 @@ var pi ${\pi}$ (long_name='inflation')
     pi_ann ${\pi^{ann}}$ (long_name='annualized inflation rate')
     ;     
 
-varexo eps_a ${\varepsilon_a}$   (long_name='technology shock')
-       eps_nu ${\varepsilon_\nu}$   (long_name='monetary policy shock')
+varexo tfp_shock ${\varepsilon_a}$   (long_name='technology shock')
+       mp_shock ${\varepsilon_\nu}$   (long_name='monetary policy shock')
        ;
 
 parameters alppha ${\alpha}$ (long_name='capital share')
@@ -123,9 +123,9 @@ y_nat=psi_n_ya*a;
 //7. Definition output gap
 y_gap=y-y_nat;
 //8. Monetary policy shock
-nu=rho_nu*nu(-1)+eps_nu;
+nu=rho_nu*nu(-1)+mp_shock;
 //9. TFP shock
-a=rho_a*a(-1)+eps_a;
+a=rho_a*a(-1)+tfp_shock;
 //10. Production function (eq. 13)
 y=a+(1-alppha)*n;
 //11. Money growth (derived from eq. (4))
@@ -150,8 +150,8 @@ end;
 
 
 shocks;
-    var eps_nu = 0.25^2; //1 standard deviation shock of 25 basis points, i.e. 1 percentage point annualized
-    var eps_a  = 1^2; //unit shock to technology
+    var mp_shock = 0.25^2; //1 standard deviation shock of 25 basis points, i.e. 1 percentage point annualized
+    var tfp_shock  = 1^2; //unit shock to technology
 end;
 
 %----------------------------------------------------------------
@@ -168,114 +168,29 @@ check;
 stoch_simul(order = 1,
             solve_algo = 2,
             irf=30,
-            periods = 500000,
+            periods = 600000,
             drop = 100000,
             replic = 2500) y_gap pi i;
 
-
 verbatim;
 
+modna = 'gali_';
 
-
-
-len=options_.irf;
-free_ax = [1 inf -inf inf];
-
-irf_tfp = figure('Name', 'TFP shock', 'visible', 'off');
-
-subplot(3,1,1);
-plot(oo_.irfs.y_gap_eps_a, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf -.6 .1]);
-@#if flag_gali == 2
-    axis(free_ax);
+@#if flag_gali==0
+    verna='standard';
 @#endif
-ylabel('Output gap');
-hold off;
 
-
-subplot(3,1,2);
-plot(oo_.irfs.pi_eps_a, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf -.25 .05]);
-@#if flag_gali == 2
-    axis(free_ax);
+@#if flag_gali==1
+    verna='gamma1';
 @#endif
-ylabel('Inflation');
-hold off;
 
-subplot(3,1,3);
-plot(oo_.irfs.i_eps_a, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf -.4 .05]);
-@#if flag_gali == 2
-    axis(free_ax);
-@#endif
-ylabel('Interest rate');
-hold off;
-
-
-
-
-irf_mon = figure('Name', 'Monetary policy shock', 'visible', 'off');
-
-subplot(3,1,1);
-plot(oo_.irfs.y_gap_eps_nu, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf -.2 .025]);
-@#if flag_gali == 2
-    axis(free_ax);
-@#endif
-ylabel('Output gap');
-hold off;
-
-
-subplot(3,1,2);
-plot(oo_.irfs.pi_eps_nu, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf -.1 .05]);
-@#if flag_gali == 2
-    axis(free_ax);
-@#endif
-ylabel('Inflation');
-hold off;
-
-subplot(3,1,3);
-plot(oo_.irfs.i_eps_nu, 'black', 'LineWidth', 1);
-hold on;
-line([0 len], [0 0], 'Color', 'red', 'LineWidth', 1);
-axis([1 inf 0 .15]);
-@#if flag_gali == 2
-    axis(free_ax);
-@#endif
-ylabel('Interest rate');
-hold off;
-
-@#if flag_gali == 0
-print(irf_tfp, 'nkdsge_tfp', '-deps');
-print(irf_mon, 'nkdsge_mp', '-deps');
-save('gali_pi', 'pi', '-v6');
+@#if flag_gali==2
+    verna='gammainf';
 @#endif
 
 
-@#if flag_gali == 1
-print(irf_tfp, 'nkdsge_accommodative_tfp', '-deps');
-print(irf_mon, 'nkdsge_accommodative_mp', '-deps');
-@#endif
+irf_names = fieldnames(oo_.irfs);
+irf_data = oo_.irfs;
 
-
-@#if flag_gali == 2
-print(irf_tfp, 'nkdsge_aggressive_tfp', '-deps');
-print(irf_mon, 'nkdsge_aggressive_mp', '-deps');
-@#endif
-
-
-clear len;
-clear irf_tfp;
-clear irf_mon;
-clear free_ax;
+save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
+save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');

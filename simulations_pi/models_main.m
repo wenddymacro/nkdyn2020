@@ -4,6 +4,20 @@
 % with two options for the Taylor Rule
 % and saves simulated inflations.
 
+%%% Flags
+% flag_gali: 0 \gamma=1.8
+%            1 \gamma->1
+%            2 \gamma=180
+%
+% flag_shock:0 all shocks included
+%            1 only TFP and MP shock
+%
+% calibras:  0 TP
+%            1 No TP
+%
+% z_flag:    0 normal model
+%            1 all shocks off, only liquidity dryup shock
+ 
 clc; clear all;
 
 %%%%% NKDSGE, standard calibration %%%%%%%%

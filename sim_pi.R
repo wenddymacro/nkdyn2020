@@ -6,11 +6,12 @@
 
 ##### Import simulated time series #####
 sim_inflation <- data.frame(liq = readMat("./simulations_pi/nkdtc_pi_tp.mat") %>% .$pi,
-						liq_notp = readMat("./simulations_pi/nkdtc_pi_notp.mat") %>% .$pi,
-						nkdsge = readMat("./simulations_pi/gali_pi.mat") %>% .$pi,
-            sw = readMat('./simulations_pi/pinf.mat') %>% .$pinf,
-            as14 = readMat('./simulations_pi/ascardone_pi.mat') %>% .$pi
-            ) %>% as.tibble()
+                						liq_notp = readMat("./simulations_pi/nkdtc_pi_notp.mat") %>% .$pi,
+                						nkdsge = readMat("./simulations_pi/gali_pi.mat") %>% .$pi,
+                            sw = readMat('./simulations_pi/pinf.mat') %>% .$pinf,
+                            as14 = readMat('./simulations_pi/ascardone_pi.mat') %>% .$pi
+                            ) %>% 
+                              as.tibble()
 
 # burn-in drop, optional
 # sim_inflation <- sim_inflation[-(1:(dim(sim_inflation)[1]*.2)),]
@@ -20,17 +21,16 @@ sim_inflation <- data.frame(liq = readMat("./simulations_pi/nkdtc_pi_tp.mat") %>
 k = 5; llags = 120;
 
 infl <- list(names = list('Liquidity TP',
-						  'Liquidity, No TP',
-						  'NKDSGE',
-              'Smets & Wouters 07',
-              'Ascari & Sbordone 14'),
-			 exolags = list(),
-			 optilags = list(),
-       optik = list(),
-       plots = list())
+            						  'Liquidity, No TP',
+            						  'NKDSGE',
+                          'Smets & Wouters 07',
+                          'Ascari & Sbordone 14'),
+      			 exolags = list(),
+      			 optilags = list(),
+             optik = list(),
+             plots = list()
+						)
 
-
-## !!!! vectorise this loop and log the results !!!!
 
 for (i in 1:ncol(sim_inflation)){
   tic(infl[['names']][[i]])
