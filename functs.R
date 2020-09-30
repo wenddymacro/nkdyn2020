@@ -434,74 +434,6 @@ formula.maker <- function(df, y, intercept = T){
 }
 
 
-spf_funct <-  function(filnam, typs, ahead=1) {
-  # this function imports the files, reformats,
-  # renames, saves in raw format and produces
-  # aggregate statistics in XTS format
-  
-  # read in xlsx files and reshape w\ spread
-  # this block selects one quarter ahead forecasts
-  # but adjusting 'ahead' parameter below one can
-  # extract other values
-  
-  # ad-hoc function inconsistent w/ external use
-  # typs is one of CPI, CORECPI, PCE, COREPCE
-  
-  
-  # 'ahead' allows to select the horizon of 
-  # forecasts one wishes to extract:
-  # -1 for previous quarter estimates
-  # 0 for nowcast
-  # 1 for one quarter ahead -- default
-  # 2 for two quarters ahead
-  # 3 for three quarters ahead
-  # 4 for one year ahead
-  
-  typ=tolower(typs)
-  
-  colu=c(rep('numeric',3),  # picks year, quarter, ID
-         rep('skip', 2+ahead),	 # skips industry
-         'numeric',				 # moving target picking 'ahead' horizon
-         rep('skip', 7-ahead)	 # skips the rest
-  )
-  
-  df=read_excel(file.path(temp_dir,filnam), 
-                na='#N/A', col_types=colu) %>%
-    spread(ID, paste0(typs,ahead+2)) %>% 
-    ts(start=c(1968, 4), frequency=4) %>%
-    as.xts()
-  
-  pst=paste0(typ,'_')
-  if (ahead==-1){
-    pst=paste0(pst,'b1')
-  } 	else {
-    pst=paste0(pst,'h') %>% paste0(ahead)
-  }
-  
-  names(df)=c('year', 'quarter', paste(pst, (1:(ncol(df)-2)), sep='_'))
-  
-  df$year <- df$quarter <- NULL
-  
-  # saving in txt csv format the raw data
-  write.zoo(df, file.path(data_dir, paste(paste0('SPF_IND_',pst),'txt', sep='.')), sep=';', row.names=F, index.name='time')
-  
-  
-  iqr <- apply(df, 1, IQR, na.rm=TRUE) %>% ts(start=c(1968, 4), frequency=4) %>% as.xts()
-  stand<-apply(df, 1, var, na.rm=T) %>% sqrt()%>% ts(start=c(1968, 4), frequency=4) %>% as.xts()
-  mean<-apply(df, 1, mean, na.rm=T)%>% ts(start=c(1968, 4), frequency=4) %>% as.xts()
-  mean[is.nan(mean)] <- NA
-  
-  lab <- paste0('spf_', pst)
-  
-  df_stat=merge(iqr, stand, mean)
-  names(df_stat)=paste(lab, c('iqr', 'sd', 'mean'), sep='_')
-  
-  
-  return(df_stat)
-}
-
-
-
 ##### TRACKING PERSISTENCE OVER TIME #####
 persistence_ridges <- function(tseries, window = 24, lags = 8){
   # requires zoo, broom
@@ -619,8 +551,6 @@ instant_pkgs(pkgs)
 
 devtools::install_github('sboysel/fredr')
 devtools::install_github('ceschi/urcabis')
-# devtools::install_version("readxl", version = "1.0.0")
-# library(urcabis) # for when the package will be duly updated (pull request)
 
 
 

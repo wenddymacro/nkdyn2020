@@ -24,7 +24,9 @@ tic('Total time')
 
 # ##### V - Inflation simulations #####
 tic('Models and simulations')
-source('dyna.R')
+get_matlab()
+run_matlab_script('./models/models_main.m',
+                  verbose = F)
 toc()
 
 

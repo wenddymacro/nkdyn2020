@@ -3,6 +3,29 @@
 # and estimates AR(p*)
 # plus plots results
 
+d_irfs <- './models/irfs'
+d_sims <- './models/simuls'
+
+
+models <- c('gali', 'liq_dsge', 'ascardone14', 'sw07')
+
+vints <- c('')
+
+##### IRFs #####################################################################
+
+noms <- readMat(file.path(d_irfs, 'gali_standard_irf_names.mat')) %>% 
+  .$irf.names %>% 
+  unlist
+
+irf_data <- readMat(file.path(d_irfs, 'gali_standard_irf_data.mat')) %>% 
+  .$irf.data %>% 
+  lapply(t) %>% 
+  bind_cols()
+
+names(irf_data) <- noms
+
+irf_data <- irf_data %>% add_column(mod = 'gali_standard',
+                                    quarter = index(.))
 
 ##### Import simulated time series #####
 sim_inflation <- data.frame(liq = readMat("./simulations_pi/nkdtc_pi_tp.mat") %>% .$pi,

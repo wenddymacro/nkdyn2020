@@ -50,8 +50,11 @@ dynare ascardone14.mod nograph nolog;
 dynare sw07.mod nolog nograph -Dflag_shock=1;
 
 %% cleanup folders
-mdls = {'gali', 'liq_dsge', 'ascardone14', 'sw07'};
-mdls = char([mdls'; strcat('+', mdls)']);
+mdls = {'gali', 'liq_dsge', 'ascardone14', 'sw07'}';
+mdls_p = strcat('+', mdls)';
+mats = strcat(mdls, '_results.mat')';
 for i=1:length(mdls)
     rmdir(char(mdls{i}), 's');
+    rmdir(char(mdls_p{i}), 's');
+    delete(char(mats{i}))
 end
