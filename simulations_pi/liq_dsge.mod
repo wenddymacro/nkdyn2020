@@ -227,7 +227,7 @@ verbatim;
 	%% Save simulations
 	sim_names = [M_.endo_names;
 	             M_.exo_names];
-	sim_data = [oo_.endo_simul',oo_.exo_simul]
+	sim_data = [oo_.endo_simul',oo_.exo_simul];
 
 	save(strcat('./',modna,verna,'_sim_names'), 'sim_names', '-v6');
 	save(strcat('./',modna,verna,'_sim_data'), 'sim_data', '-v6');
