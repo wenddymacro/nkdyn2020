@@ -261,15 +261,15 @@ verna = '14';
 irf_names = fieldnames(oo_.irfs);
 irf_data = oo_.irfs;
 
-save(strcat('./',modna,verna,'_irf_names'), 'irf_names', '-v6');
-save(strcat('./',modna,verna,'_irf_data'), 'irf_data', '-v6');
+save(strcat('./irfs/',modna,verna,'_irf_names'), 'irf_names', '-v6');
+save(strcat('./irfs/',modna,verna,'_irf_data'), 'irf_data', '-v6');
 
 %% Save simulations
 sim_names = [M_.endo_names;
              M_.exo_names];
 sim_data = [oo_.endo_simul',oo_.exo_simul];
 
-save(strcat('./',modna,verna,'_sim_names'), 'sim_names', '-v6');
-save(strcat('./',modna,verna,'_sim_data'), 'sim_data', '-v6');
+save(strcat('./simuls/',modna,verna,'_sim_names'), 'sim_names', '-v6');
+save(strcat('./simuls/',modna,verna,'_sim_data'), 'sim_data', '-v6');
 
 clear irf_names irf_data sim_data sim_names modna verna;

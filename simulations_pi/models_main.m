@@ -20,6 +20,9 @@
  
 clc; clear all;
 
+mkdir('irfs');
+mkdir('simuls');
+
 %% Simulations of Gali (2015) standard NKDSGE
 
 % standard calibration
@@ -48,4 +51,7 @@ dynare sw07.mod nolog nograph -Dflag_shock=1;
 
 %% cleanup folders
 mdls = {'gali', 'liq_dsge', 'ascardone14', 'sw07'};
-rmdir([mdls; strcat('+', mdls)], 's');
+mdls = char([mdls'; strcat('+', mdls)']);
+for i=1:length(mdls)
+    rmdir(char(mdls{i}), 's');
+end
