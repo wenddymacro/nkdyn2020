@@ -7,34 +7,34 @@ d_irfs <- './models/irfs'
 d_sims <- './models/simuls'
 
 
-models <- c('gali', 'liq_dsge', 'ascardone14', 'sw07')
+models <- c('gali_standard',
+            'gali_gamma1',
+            'gali_gammainf',
+            'liq_notp',
+            'liq_tp',
+            'ascardone14', 
+            'sw07')
 
-vints <- c('')
+models_zshock <- c('liq_notp_zshock',
+                   'liq_tp_zshock')
 
 ##### IRFs #####################################################################
+irfs_all <- map(.x = models,
+                .f = irfs) %>% 
+  bind_rows() %>% 
+  arrange(mod, shock, var, quarter)
+  
+irfs_z <- map(.x = models_zshock,
+              .f = irfs_z) %>% 
+  bind_rows() %>% 
+  arrange(mod, var, quarter)
 
-noms <- readMat(file.path(d_irfs, 'gali_standard_irf_names.mat')) %>% 
-  .$irf.names %>% 
-  unlist
+##### simulated inflation ######################################################
 
-irf_data <- readMat(file.path(d_irfs, 'gali_standard_irf_data.mat')) %>% 
-  .$irf.data %>% 
-  lapply(t) %>% 
-  bind_cols()
+sim_inflation <- map(.x = c(models, models_zshock),
+                     .f = simpi) %>% 
+  bind_rows() 
 
-names(irf_data) <- noms
-
-irf_data <- irf_data %>% add_column(mod = 'gali_standard',
-                                    quarter = index(.))
-
-##### Import simulated time series #####
-sim_inflation <- data.frame(liq = readMat("./simulations_pi/nkdtc_pi_tp.mat") %>% .$pi,
-                						liq_notp = readMat("./simulations_pi/nkdtc_pi_notp.mat") %>% .$pi,
-                						nkdsge = readMat("./simulations_pi/gali_pi.mat") %>% .$pi,
-                            sw = readMat('./simulations_pi/pinf.mat') %>% .$pinf,
-                            as14 = readMat('./simulations_pi/ascardone_pi.mat') %>% .$pi
-                            ) %>% 
-                              as.tibble()
 
 # burn-in drop, optional
 # sim_inflation <- sim_inflation[-(1:(dim(sim_inflation)[1]*.2)),]
@@ -43,11 +43,7 @@ sim_inflation <- data.frame(liq = readMat("./simulations_pi/nkdtc_pi_tp.mat") %>
 
 k = 5; llags = 120;
 
-infl <- list(names = list('Liquidity TP',
-            						  'Liquidity, No TP',
-            						  'NKDSGE',
-                          'Smets & Wouters 07',
-                          'Ascari & Sbordone 14'),
+infl <- list(names = list(c(models, models_zshock)),
       			 exolags = list(),
       			 optilags = list(),
              optik = list(),
@@ -61,28 +57,27 @@ for (i in 1:ncol(sim_inflation)){
   # loop to fill up infl list
 
   # exogenous lags, k
-   infl[['exolags']][[i]] <- lm(data = sim_inflation[,i] %>% 
+   infl[['exolags']][[i]] <- lm(data = sim_inflation[[i]] %>% 
+                                          dplyr::select(pi) %>% 
                                                lagger_bis(lag=k),
-                               formula = formula.maker(df = sim_inflation[,i] %>% 
+                               formula = formula.maker(df = sim_inflation[[i]] %>%
+                                                            dplyr::select(pi) %>% 
                                                                      lagger_bis(lag=k),
-                                                        y = sim_inflation[,i] %>% 
-                                                            lagger_bis(lag=k) %>% 
-                                                            names(.) %>% first())
+                                                        y = 'pi')
                                 ) 
 
   # retrieve optimal lags from tweaked urca, Bayes Info Criterion
-  infl[['optilags']][[i]] <- ur.df(sim_inflation[,i] %>% as.matrix(),
+  infl[['optilags']][[i]] <- ur.df(sim_inflation[[i]] %>% dplyr::select(pi) %>% as.matrix(),
                               lags = llags,
                               selectlags = 'BIC') %>% 
                             slot(., 'optilags')
 
   # estimate AR with optimal lags according to BIC
-  infl[['optik']][[i]] <- lm(data = sim_inflation[,i] %>% lagger_bis(lag = infl[['optilags']][[i]]),
-                             formula = formula.maker(df = sim_inflation[,i] %>% 
+  infl[['optik']][[i]] <- lm(data = sim_inflation[[i]] %>% lagger_bis(lag = infl[['optilags']][[i]]),
+                             formula = formula.maker(df = sim_inflation[[i]] %>% 
+                                                       dplyr::select(pi) %>% 
                                                                      lagger_bis(lag=infl[['optilags']][[i]]),
-                                                        y = sim_inflation[,i] %>% 
-                                                            lagger_bis(lag=infl[['optilags']][[i]]) %>% 
-                                                           names(.) %>% first())
+                                                        y = 'pi')
                                 ) 
   
   df <- infl[['optik']][[i]]  %>% broom::tidy() %>% .[-(1:2),]

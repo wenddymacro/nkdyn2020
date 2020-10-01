@@ -41,7 +41,7 @@ var z y m pi s tfp e_mp b y_gap;
 predetermined_variables z;
 
 % exogenous variables
-varexo e_ee e_pc tpf_shock mp_shock e_z;
+varexo e_ee e_pc tfp_shock mp_shock e_z;
 
 % Parameters of the model,
 % to map into standard params
@@ -138,7 +138,7 @@ s=theta*pi(+1) + e_mp;
 
 
 % AR for technology
-tfp=(1-rho_tfp)*tfpbar + rho_tfp*tfp(-1) + tpf_shock;
+tfp=(1-rho_tfp)*tfpbar + rho_tfp*tfp(-1) + tfp_shock;
 
 % AR for Mon Pol shocks
 e_mp=rho_mp*e_mp(-1) + mp_shock;
@@ -163,7 +163,7 @@ var e_pc; 	stderr .000;
 % regulars shocks
 @#if z_flag != 1
 % TFP shock
-var tpf_shock;	stderr 1; % for non-standard-size shock
+var tfp_shock;	stderr 1; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
 var mp_shock; 	stderr 0.25^2;
@@ -177,7 +177,7 @@ var e_z; 		stderr 0;
 % shock to z
 @#if z_flag == 1
 % TFP shock
-var tpf_shock;	stderr 0; % for non-standard-size shock
+var tfp_shock;	stderr 0; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
 var mp_shock; 	stderr 0;
