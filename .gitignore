@@ -8,7 +8,7 @@
 *.mat
 !simulation_pi/usmodel_data.mat
 !simulation_pi/usmodel_shock_decomp_mode.mat
-
+plots/
 
 
 ### Julia ###

@@ -3,9 +3,6 @@
 # and estimates AR(p*)
 # plus plots results
 
-d_irfs <- './models/irfs'
-d_sims <- './models/simuls'
-
 
 models <- c('gali_standard',
             'gali_gamma1',
@@ -36,35 +33,43 @@ sim_inflation <- map(.x = c(models, models_zshock),
   bind_rows() 
 
 
-# burn-in drop, optional
-# sim_inflation <- sim_inflation[-(1:(dim(sim_inflation)[1]*.2)),]
-
 ##### set exo lags and list #####
 
-k = 5; llags = 120;
+k = 5; llags = 80; n = length(sim_inflation);
 
 infl <- list(names = list(c(models, models_zshock)),
       			 exolags = list(),
       			 optilags = list(),
              optik = list(),
-             plots = list()
+             plots = list(),
+      			 sim_inflation = sim_inflation
 						)
+
+
+##### AR5 OLS ##################################################################
+infl[['exolags']] <- pmap(.l = list(data = infl$sim_inflation,
+                                    .lags = fm_apply(k, n),
+                                    interc = fm_apply(T, n)),
+                          .f = lm_custom)
+
+##### Optimal lags #############################################################
+infl[['optilags']] <- pmap(.l = list(data = infl$sim_inflation,
+                                     .maxlags = llags),
+                           .f = optilags)
+
+##### ARk ######################################################################
+infl[['optik']] <- pmap(.l = list(data = infl$sim_inflation,
+                                  .lags = infl[['optilags']],
+                                  interc = fm_apply(T, n)),
+                        .f = lm_custom)
+
+
 
 
 for (i in 1:ncol(sim_inflation)){
   tic(infl[['names']][[i]])
 
-  # loop to fill up infl list
 
-  # exogenous lags, k
-   infl[['exolags']][[i]] <- lm(data = sim_inflation[[i]] %>% 
-                                          dplyr::select(pi) %>% 
-                                               lagger_bis(lag=k),
-                               formula = formula.maker(df = sim_inflation[[i]] %>%
-                                                            dplyr::select(pi) %>% 
-                                                                     lagger_bis(lag=k),
-                                                        y = 'pi')
-                                ) 
 
   # retrieve optimal lags from tweaked urca, Bayes Info Criterion
   infl[['optilags']][[i]] <- ur.df(sim_inflation[[i]] %>% dplyr::select(pi) %>% as.matrix(),

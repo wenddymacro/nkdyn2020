@@ -4,7 +4,7 @@
 
 ##### Fig.1 ###################################################################
 # comparison of Gali and liq_tp to TFP shock
-fig1 <- cowplot::plot_grid(nrow = 3,
+fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                            
                            fig1_ygap = irfs_all %>% 
                              filter(mod %in% c('gali_standard', 'liq_tp'), 
@@ -15,7 +15,7 @@ fig1 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.21.2, 
+                                       size = 1.2, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -34,7 +34,7 @@ fig1 <- cowplot::plot_grid(nrow = 3,
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.21.2, 
+                                       size = 1.2, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -53,7 +53,7 @@ fig1 <- cowplot::plot_grid(nrow = 3,
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.21.2, 
+                                       size = 1.2, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -68,7 +68,8 @@ fig1 <- cowplot::plot_grid(nrow = 3,
 ##### Fig. 2 ###################################################################
 # comparison of Gali and liq_tp to MP shock
 
-fig2 <- cowplot::plot_grid(nrow = 3,
+fig2 <- cowplot::plot_grid(nrow = 3,  
+                           align = 'v',
                            fig2_ygap = irfs_all %>% 
                              filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'mp',
@@ -130,8 +131,11 @@ fig2 <- cowplot::plot_grid(nrow = 3,
 
 ##### Fig. 3 ###################################################################
 # Comparison of liq_tp & liq_notp, all vars
-#' *TODO: fix line size*
-fig3 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
+
+fig3 <- cowplot::plot_grid(nrow = 3, 
+                           ncol = 2, 
+                           byrow = F, 
+                           align = 'hv',
                            
                            ygap = irfs_all %>% 
                              filter(mod %in% c('liq_tp', 'liq_notp'),
@@ -223,7 +227,7 @@ fig3 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
                                    axis.title.x = element_blank()) +
                              ylab('Money Holdings'),
                            
-                           ygap = irfs_all %>% 
+                           liq = irfs_all %>% 
                              filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'z') %>%
@@ -246,7 +250,9 @@ fig3 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
 ##### Fig. 3.1 #################################################################
 # comparison liq_tp, liq_notp to mp shock
 
-fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
+fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2, 
+                             byrow = F, 
+                             align = 'hv',
                            
                            ygap = irfs_all %>% 
                              filter(mod %in% c('liq_tp', 'liq_notp'),
@@ -338,7 +344,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
                                    axis.title.x = element_blank()) +
                              ylab('Money Holdings'),
                            
-                           ygap = irfs_all %>% 
+                           liq = irfs_all %>% 
                              filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'z') %>%
@@ -362,7 +368,9 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
 ##### Fig.4 ####################################################################♦
 # liq_tp, liq_notp: liquidity dry-up
 
-fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
+fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2, 
+                           byrow = F, 
+                           align = 'hv',
                            
                            ygap = irfs_z %>% 
                              filter(var == 'y_gap') %>%
@@ -444,7 +452,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
                                    axis.title.x = element_blank()) +
                              ylab('Money Holdings'),
                            
-                           ygap = irfs_z %>% 
+                           liq = irfs_z %>% 
                              filter(var == 'z') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
@@ -462,4 +470,43 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2, byrow = F,
  
 )
 
+##### Figs lags ################################################################
+# plots autocorrelation with significance for the nine models
+
 ##### Save to pdf ##############################################################
+
+ggsave(filename = file.path(d_plots, 'tp_gali_tfp.pdf'),
+       plot = fig1,
+       device = 'pdf',
+       units = 'in',
+       width = 6,
+       height = 9*6/16)
+
+ggsave(filename = file.path(d_plots, 'tp_gali_mp.pdf'),
+       plot = fig2,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
+ggsave(filename = file.path(d_plots, 'tp_notp_tfp.pdf'),
+       plot = fig3,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
+ggsave(filename = file.path(d_plots, 'tp_notp_mp.pdf'),
+       plot = fig3.1,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
+ggsave(filename = file.path(d_plots, 'tp_notp_z.pdf'),
+       plot = fig4,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
