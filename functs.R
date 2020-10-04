@@ -148,7 +148,7 @@ simpi <- function(model, simpi_directory = './models/simuls', all_var = F){
   return(sim_data)
 }
 
-lm_custom <- function(data, vars = c('pi'), .lags, interc = F){
+lm_custom <- function(data, .lags, interc = F){
   
   # this function takes a df, selects a provided list of vars,
   # runs a linear model with provided lags, outputs the results
@@ -157,12 +157,12 @@ lm_custom <- function(data, vars = c('pi'), .lags, interc = F){
   invisible(require(dplyr))
   
   transformed_data <- data %>% 
-    dplyr::select(!!vars) %>% 
+    dplyr::select('pi') %>% 
     lagger_bis(lag = .lags)
   
   formulavars <- formula.maker(df = transformed_data,
                                intercept = interc,
-                               y = vars)
+                               y = 'pi')
   
   out_lm <- lm(data = transformed_data,
                formula = formulavars)
@@ -268,6 +268,72 @@ formula.maker <- function(df, y, intercept = T){
   
   attr(fomu, which='.Environment') <- .GlobalEnv
   return(fomu)
+}
+
+plot_lags <- function(lm_ar, .name, .dir = d_plots, selector = T){
+  
+  # function to plot along coefficients on lags and significance bars
+  # selects only past the first lag by default
+  
+  invisible(require(broom))
+  invisible(require(dplyr))
+  invisible(require(ggplot2))
+  invisible(require(stringi))
+  
+  if (length(lm_ar$coefficients)>3){
+    if (selector){
+      tidy_lm <- tidy(lm_ar) %>% 
+        filter(term != '(Intercept)', 
+               term != 'pi.1') %>% 
+        mutate(term = 1:n())
+    }else{
+      tidy_lm <- tidy(lm_ar) %>% 
+        filter(term != '(Intercept)') %>% 
+        mutate(term = 1:n())
+    }
+    
+    max_est <- max(abs(tidy_lm$estimate))
+    
+    plt <- tidy_lm %>% 
+      ggplot() +
+      geom_col(aes(y = p.value*max_est,
+                   x = term),
+               colour = 'blue',
+               fill = 'blue',
+               width = .5) +
+      geom_line(aes(x = term,
+                    y = estimate),
+                size = 1,
+                alpha = 1,
+                colour = 'black') +
+      geom_ribbon(aes(x = term,
+                      ymin = (estimate - 2*std.error),
+                      ymax = (estimate + 2*std.error)),
+                  colour = 'red',
+                  alpha = .02,
+                  size = .01) + 
+      geom_hline(yintercept = 0,
+                 colour = 'black') + 
+      geom_hline(yintercept = .01*max_est) +
+      theme_minimal() + xlab('Lags') +
+      scale_y_continuous(name = 'Coefficient',
+                         sec.axis = sec_axis(~./max_est,
+                                             name = 'Significance',
+                                             labels = function(b) {paste0(round(b * 100, 0), "%")})
+                         )
+    
+    ggsave(filename = file.path(.dir, paste0(.name,'_lagplot.pdf')),
+           device = 'pdf', 
+           plot = plt, 
+           units = 'in',
+           width = 8,
+           height = 9*8/16)
+    
+    print(plt)
+  }else{
+      cat('\n\nToo few lags.\n\n')
+    }
+  
 }
 
 ##### Packages Loader #####

@@ -473,6 +473,11 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
 ##### Figs lags ################################################################
 # plots autocorrelation with significance for the nine models
 
+acplots <- pmap(.l = list(lm_ar = infl$optik,
+                          .name = infl$names),
+                .f = plot_lags
+                )
+
 ##### Save to pdf ##############################################################
 
 ggsave(filename = file.path(d_plots, 'tp_gali_tfp.pdf'),
@@ -510,3 +515,18 @@ ggsave(filename = file.path(d_plots, 'tp_notp_z.pdf'),
        width = 8,
        height = 9*8/16)
 
+
+
+##### housekeeping #############################################################
+fig_list <- list(fig1, 
+                 fig2, 
+                 fig3, 
+                 fig3.1, 
+                 fig4,
+                 unlist(acplots))
+
+rm(fig1, 
+   fig2, 
+   fig3, 
+   fig3.1, 
+   fig4)

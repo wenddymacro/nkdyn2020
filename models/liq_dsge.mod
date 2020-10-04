@@ -3,7 +3,7 @@
 % Calibration as in Gali 2015
 %
 % 
-% V0.95
+% V1
 
 %%%% Flags for conditional vars %%%%
 
@@ -193,12 +193,12 @@ end;
 %%%% Model simulations and IRFs %%%%%
 check;
 
-stoch_simul(order=1, 		% approx order			
-			solve_algo=2, 	% solving algorithm			
-			irf=30,			% IRFs horizon			
-			periods=600000, % iterations to simulate
-			drop=100000, 	% burn-in drop			
-			replic=2500)		% IRF iterations
+stoch_simul(order=1, 		  % approx order			
+			solve_algo=2, 	    % solving algorithm			
+			irf=30,			        % IRFs horizon			
+			periods=500000,     % iterations to simulate
+			drop=100000, 	      % burn-in drop			
+			replic=2500)		    % IRF iterations
 			y_gap pi s m z b;   % vars to plot
 
 verbatim;
