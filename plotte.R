@@ -372,8 +372,8 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                            byrow = F, 
                            align = 'hv',
                            
-                           ygap = irfs_z %>% 
-                             filter(var == 'y_gap') %>%
+                           ygap = irfs_zshock %>% 
+                             filter(.$var == 'y_gap') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -388,7 +388,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                    axis.title.x = element_blank()) +
                              ylab('Output Gap'),
                            
-                           polr = irfs_z %>% 
+                           polr = irfs_zshock %>% 
                              filter(var == 's') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
@@ -404,7 +404,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                    axis.title.x = element_blank()) +
                              ylab('Policy Rate'),
                            
-                           bond = irfs_z %>% 
+                           bond = irfs_zshock %>% 
                              filter(var == 'b') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
@@ -420,7 +420,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Liquid Bonds') +
                              xlab('Quarters'),
                            
-                           pi = irfs_z %>% 
+                           pi = irfs_zshock %>% 
                              filter(var == 'pi') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
@@ -436,7 +436,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                    axis.title.x = element_blank()) +
                              ylab('Inflation'),
                            
-                           mon = irfs_z %>% 
+                           mon = irfs_zshock %>% 
                              filter(var == 'm') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
@@ -452,7 +452,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                    axis.title.x = element_blank()) +
                              ylab('Money Holdings'),
                            
-                           liq = irfs_z %>% 
+                           liq = irfs_zshock %>% 
                              filter(var == 'z') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,

@@ -21,7 +21,7 @@ irfs_all <- map(.x = models,
               bind_rows() %>% 
               arrange(mod, shock, var, quarter)
   
-irfs_z <- map(.x = models_zshock,
+irfs_zshock <- map(.x = models_zshock,
               .f = irfs_z) %>% 
             bind_rows() %>% 
             arrange(mod, var, quarter)
