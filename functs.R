@@ -178,7 +178,7 @@ optilags <- function(data, .maxlags){
     dplyr::select(pi) %>% 
     as.matrix()
   
-  optilags <- ur.df(y = data_v, 
+  optilags <- urca::ur.df(y = data_v, 
                     lags = .maxlags, 
                     selectlags = 'BIC') %>% 
     slot(., 'optilags')

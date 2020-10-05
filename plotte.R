@@ -478,6 +478,68 @@ acplots <- pmap(.l = list(lm_ar = infl$optik,
                 .f = plot_lags
                 )
 
+##### Tab from stargazer #######################################################
+
+
+sink('oo')
+stargazer(infl$exolags[c(1,4,5,6,7)],
+                    # type = 'latex', 
+                    covariate.labels = c('Const.', paste0('\\nth{', 1:5, '} lag')), 
+                    # style = 'aer',
+                    column.labels = c('\\citet{gali15}', 
+                                      'Liq. TP', 
+                                      'Liq. no TP', 
+                                      '\\citet{ascardone14}', 
+                                      '\\citet{smetswouters07}'),
+                    align = T,
+                    font.size = 'small',
+                    out.header = F,
+                    header = F,
+                    initial.zero = F,
+                    model.numbers = F,
+                    omit.stat = c('ser', 
+                                  # 'adj.rsq', 
+                                  'f'),
+                    # dep.var.labels.include = F, 
+                    dep.var.labels = 'Simulated Inflation',
+                    df = F,
+                    notes.align = 'l',
+                    float = T,
+                    intercept.bottom = F, 
+                    nobs = F, 
+                    # keep.stat = 'bic',
+                    label = 'tab:ar5_reg'
+                    ) %>% 
+   gsub(pattern = '\\caption{}',
+        replacement = '',
+        x = ., 
+        fixed = T) %>%
+   gsub(pattern = '\\end{tabular}', 
+        replacement = '', 
+        x = ., 
+        fixed = T) %>% 
+   gsub(pattern = "\\textit{Note:}  & \\multicolumn{5}{l}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\\\",
+        replacement = '\\end{tabular}
+                       \\caption{$AR\\left(5\\right)$ estimates on simulated data from 4 models. 
+                        Only technological and monetary policy shocks are allowed and each model 
+                        is simulated for 500000 periods, after discarding the first 100000 iterations. All shocks
+                        are set to have zero mean, equal variance, and are iid. Second and third columns
+                        present estimates for our model with liquidity, complying to the Taylor Principle
+                        and violating it, respectively. Significance codes: $^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01}',
+        fixed=T,
+        x = .) %>% 
+   gsub(pattern = '\n ', 
+        replacement = '', 
+        fixed = T, 
+        x = .) %>% 
+   write(x = .,
+         file = file.path(d_tabs, 'ar5_reg.tex')) %>% 
+   capture.output()
+sink(NULL)
+unlink('oo')
+                     
+   
+
 ##### Save to pdf ##############################################################
 
 ggsave(filename = file.path(d_plots, 'tp_gali_tfp.pdf'),
