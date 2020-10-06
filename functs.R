@@ -279,34 +279,32 @@ plot_lags <- function(lm_ar, .name, .dir = d_plots, selector = T){
   invisible(require(dplyr))
   invisible(require(ggplot2))
   invisible(require(stringi))
+  invisible(require(cowplot))
   
   if (length(lm_ar$coefficients)>3){
     if (selector){
       tidy_lm <- tidy(lm_ar) %>% 
         filter(term != '(Intercept)', 
                term != 'pi.1') %>% 
-        mutate(term = 1:n())
+        mutate(idx = sub('pi.', '', term) %>% 
+                 as.numeric())
     }else{
       tidy_lm <- tidy(lm_ar) %>% 
         filter(term != '(Intercept)') %>% 
-        mutate(term = 1:n())
+        mutate(idx = sub('pi.', '', term) %>% 
+                 as.numeric())
     }
     
-    max_est <- max(abs(tidy_lm$estimate))
+    # max_est <- max(abs(tidy_lm$estimate))
     
-    plt <- tidy_lm %>% 
+    plt_lin <- tidy_lm %>% 
       ggplot() +
-      geom_col(aes(y = p.value*max_est,
-                   x = term),
-               colour = 'blue',
-               fill = 'blue',
-               width = .5) +
-      geom_line(aes(x = term,
+      geom_line(aes(x = idx,
                     y = estimate),
-                size = 1,
+                size = .8,
                 alpha = 1,
                 colour = 'black') +
-      geom_ribbon(aes(x = term,
+      geom_ribbon(aes(x = idx,
                       ymin = (estimate - 2*std.error),
                       ymax = (estimate + 2*std.error)),
                   colour = 'red',
@@ -314,25 +312,216 @@ plot_lags <- function(lm_ar, .name, .dir = d_plots, selector = T){
                   size = .01) + 
       geom_hline(yintercept = 0,
                  colour = 'black') + 
-      geom_hline(yintercept = .01*max_est) +
-      theme_minimal() + xlab('Lags') +
-      scale_y_continuous(name = 'Coefficient',
-                         sec.axis = sec_axis(~./max_est,
-                                             name = 'Significance',
-                                             labels = function(b) {paste0(round(b * 100, 0), "%")})
-                         )
+      theme_minimal() + ylab('Coefficient est.') +
+      theme(axis.title.x = element_blank())
+    
+    plt_bar <- tidy_lm %>% 
+      ggplot() + 
+      geom_col(aes(y = p.value,
+                   x = idx),
+               colour = 'blue',
+               fill = 'blue',
+               width = .5) + 
+      geom_hline(yintercept = .05) +
+      theme_minimal() + xlab('Lag') +
+      ylab('Significance')
+    
+    cwplt <- cowplot::plot_grid(plt_lin,
+                                plt_bar,
+                                nrow = 2,
+                                align = 'hv')
     
     ggsave(filename = file.path(.dir, paste0(.name,'_lagplot.pdf')),
            device = 'pdf', 
-           plot = plt, 
+           plot = cwplt, 
            units = 'in',
            width = 8,
            height = 9*8/16)
     
-    print(plt)
+    print(cwplt)
   }else{
       cat('\n\nToo few lags.\n\n')
     }
+  
+}
+
+pir_sim <- function(llm, nam, pval=.01){
+  # takes a lm model, stores n of lags,
+  # sum over coefs, computes sum of covar matrix, 
+  # repeats the same for significant lags
+  # outputs tibble
+  
+  invisible(require(broom))
+  invisible(require(dplyr))
+  invisible(require(tibble))
+  
+  tdy_llm <- llm %>% 
+    tidy()
+  
+  const_flag <- attr(attr(llm$model, "terms"), "intercept")
+  
+  if (const_flag) {
+    
+    tbl_alllags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        dplyr::select(estimate) %>% 
+        sum(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'all_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        nrow()
+    )
+    
+    tbl_siglags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)',
+               p.value <= pval) %>% 
+        dplyr::select(estimate) %>% 
+        sum(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'sig_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)',
+                      p.value <= pval) %>% 
+        nrow()
+    )
+    
+  }else{
+    
+    tbl_alllags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        dplyr::select(estimate) %>% 
+        sum(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'all_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        nrow()
+    )
+    
+    tbl_siglags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(p.value <= pval) %>% 
+        dplyr::select(estimate) %>% 
+        sum(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'sig_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(p.value <= pval) %>% 
+        nrow()
+    )
+    
+  }
+  
+return(bind_rows(tbl_alllags, tbl_siglags))
+  
+}
+
+pir_sim_sq <- function(llm, nam, pval=.01){
+  # takes a lm model, stores n of lags,
+  # sum over coefs, computes sum of covar matrix, 
+  # repeats the same for significant lags
+  # outputs tibble
+  
+  invisible(require(broom))
+  invisible(require(dplyr))
+  invisible(require(tibble))
+  
+  tdy_llm <- llm %>% 
+    tidy()
+  
+  const_flag <- attr(attr(llm$model, "terms"), "intercept")
+  
+  if (const_flag) {
+    
+    tbl_alllags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        dplyr::select(estimate) %>% 
+        `^`(., 2) %>% 
+        sum() %>% 
+        sqrt() ,
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'all_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        nrow()
+    )
+    
+    tbl_siglags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)',
+                      p.value <= pval) %>% 
+        dplyr::select(estimate) %>%
+        `^`(., 2)  %>%  
+        sum()%>% 
+        sqrt(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'sig_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)',
+                      p.value <= pval) %>% 
+        nrow()
+    )
+    
+  }else{
+    
+    tbl_alllags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(term != '(Intercept)') %>% 
+        dplyr::select(estimate) %>% 
+        `^`(., 2) %>% 
+        sum() %>% 
+        sqrt(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'all_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        nrow()
+    )
+    
+    tbl_siglags <- tibble(
+      rho = tdy_llm %>% 
+        dplyr::filter(p.value <= pval) %>% 
+        dplyr::select(estimate) %>%
+        `^`(., 2) %>% 
+        sum() %>% 
+        sqrt(),
+      se = vcov(llm) %>% 
+        .[2:nrow(.), 2:ncol(.)] %>% 
+        sum(),
+      tag = 'sig_lags',
+      mod = nam,
+      lags = tdy_llm %>% 
+        dplyr::filter(p.value <= pval) %>% 
+        nrow()
+    )
+    
+  }
+  
+  return(bind_rows(tbl_alllags, tbl_siglags))
   
 }
 

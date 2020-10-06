@@ -15,7 +15,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -34,7 +34,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -53,7 +53,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -79,7 +79,7 @@ fig2 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -98,7 +98,7 @@ fig2 <- cowplot::plot_grid(nrow = 3,
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -117,7 +117,7 @@ fig2 <- cowplot::plot_grid(nrow = 3,
                                            y = value, 
                                            group = mod, 
                                            linetype = mod), 
-                                       size = 1.2, 
+                                       size = 1, 
                                        alpha = 1, 
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -146,7 +146,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -164,7 +164,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -182,7 +182,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -200,7 +200,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -218,7 +218,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -236,7 +236,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -263,7 +263,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -281,7 +281,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -299,7 +299,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -317,7 +317,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -335,7 +335,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -353,7 +353,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -379,7 +379,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -395,7 +395,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -411,7 +411,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -427,7 +427,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -443,7 +443,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -459,7 +459,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                                            y = value,
                                            group = mod,
                                            linetype = mod),
-                                       size = 1.2,
+                                       size = 1,
                                        alpha = 1,
                                        colour = 'black') +
                              geom_hline(yintercept = 0) +
@@ -487,8 +487,8 @@ stargazer(infl$exolags[c(1,4,5,6,7)],
                     covariate.labels = c('Const.', paste0('\\nth{', 1:5, '} lag')), 
                     # style = 'aer',
                     column.labels = c('\\citet{gali15}', 
-                                      'Liq. TP', 
-                                      'Liq. no TP', 
+                                      'Liq. $\\gamma=1.8$', 
+                                      'Liq. $\\gamma=.5$', 
                                       '\\citet{ascardone14}', 
                                       '\\citet{smetswouters07}'),
                     align = T,
@@ -537,8 +537,30 @@ stargazer(infl$exolags[c(1,4,5,6,7)],
    capture.output()
 sink(NULL)
 unlink('oo')
-                     
-   
+
+##### Simulated persistence ####################################################
+
+persi <- infl$sim_persistence %>% 
+        filter(mod %in% c('gali_standard',
+                          'liq_notp',
+                          'liq_tp',
+                          'ascardone14',
+                          'sw07')) %>% 
+        ggplot() + 
+        geom_col(aes(x = mod, y = rho, fill = tag), position = 'dodge') +
+        theme_minimal() + ylab('Sum of coefficients')+ 
+        scale_color_viridis_d(aesthetics = 'fill', begin = .3, end = .7, option = 'B')
+
+persi_2 <- infl$sim_persistence_abs %>% 
+        filter(mod %in% c('gali_standard',
+                          'liq_notp',
+                          'liq_tp',
+                          'ascardone14',
+                          'sw07')) %>% 
+        ggplot() + 
+        geom_col(aes(x = mod, y = rho, fill = tag), position = 'dodge') +
+        theme_minimal() + ylab('Sum of coefficients') + 
+        scale_color_viridis_d(aesthetics = 'fill', begin = .3, end = .7, option = 'B')
 
 ##### Save to pdf ##############################################################
 

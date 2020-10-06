@@ -62,3 +62,12 @@ infl[['optik']] <- pmap(.l = list(data = infl$sim_inflation,
                                   interc = fm_apply(T, n)),
                         .f = lm_custom)
 
+infl$sim_persistence <- pmap(.l = list(llm = infl$optik,
+                                       nam = infl$names),
+                             .f = pir_sim) %>% 
+  bind_rows()
+
+infl$sim_persistesce_rsq <- pmap(.l = list(llm = infl$optik,
+                                           nam = infl$names),
+                                 .f = pir_sim_sq) %>% 
+  bind_rows()
