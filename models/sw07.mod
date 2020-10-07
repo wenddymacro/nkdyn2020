@@ -364,16 +364,18 @@ shocks;
 
 % turn off all shocks but those in other models too
 @#if flag_shock == 1
-  var tfp_shock;
-  stderr 1;
+  % var tfp_shock;
+  % stderr 1;
+  var tfp_shock = 1;
   var eb;
   stderr 0;
   var eg;
   stderr 0;
   var eqs;
   stderr 0;
-  var mp_shock;
-  stderr .25^2;
+  % var mp_shock;
+  % stderr .25^2;
+  var mp_shock = 1;
   var epinf;
   stderr 0;
   var ew;

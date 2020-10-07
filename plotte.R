@@ -7,7 +7,7 @@
 fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                            
                            fig1_ygap = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'tfp',
                                     var == 'y_gap') %>% 
                              ggplot(data = .) +
@@ -26,7 +26,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                            
                            
                            fig1_pi = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'tfp',
                                     var == 'pi') %>% 
                              ggplot() +
@@ -45,7 +45,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
                            
                            
                            fig1_polr = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'tfp',
                                     var %in% c('i', 's')) %>% 
                              ggplot() +
@@ -71,7 +71,7 @@ fig1 <- cowplot::plot_grid(nrow = 3, align = 'v',
 fig2 <- cowplot::plot_grid(nrow = 3,  
                            align = 'v',
                            fig2_ygap = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'mp',
                                     var == 'y_gap') %>% 
                              ggplot(data = .) +
@@ -90,7 +90,7 @@ fig2 <- cowplot::plot_grid(nrow = 3,
                            
                            
                            fig2_pi = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'mp',
                                     var == 'pi') %>% 
                              ggplot() +
@@ -109,7 +109,7 @@ fig2 <- cowplot::plot_grid(nrow = 3,
                            
                            
                            fig2_polr = irfs_all %>% 
-                             filter(mod %in% c('gali_standard', 'liq_tp'), 
+                             dplyr::filter(mod %in% c('gali_standard', 'liq_tp'), 
                                     shock == 'mp',
                                     var %in% c('i', 's')) %>% 
                              ggplot() +
@@ -138,7 +138,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                            align = 'hv',
                            
                            ygap = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'y_gap') %>%
                              ggplot() +
@@ -156,7 +156,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                              ylab('Output Gap'),
                            
                            polr = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 's') %>%
                              ggplot() +
@@ -174,7 +174,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                              ylab('Policy Rate'),
                            
                            bond = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'b') %>%
                              ggplot() +
@@ -192,7 +192,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                              xlab('Quarters'),
                            
                            pi = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'pi') %>%
                              ggplot() +
@@ -210,7 +210,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                              ylab('Inflation'),
                            
                            mon = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'y_gap') %>%
                              ggplot() +
@@ -228,7 +228,7 @@ fig3 <- cowplot::plot_grid(nrow = 3,
                              ylab('Money Holdings'),
                            
                            liq = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'mp',
                                     var == 'z') %>%
                              ggplot() +
@@ -255,7 +255,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              align = 'hv',
                            
                            ygap = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'y_gap') %>%
                              ggplot() +
@@ -273,7 +273,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Output Gap'),
                            
                            polr = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 's') %>%
                              ggplot() +
@@ -291,7 +291,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Policy Rate'),
                            
                            bond = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'b') %>%
                              ggplot() +
@@ -309,7 +309,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              xlab('Quarters'),
                            
                            pi = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'pi') %>%
                              ggplot() +
@@ -327,7 +327,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Inflation'),
                            
                            mon = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'm') %>%
                              ggplot() +
@@ -345,7 +345,7 @@ fig3.1 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Money Holdings'),
                            
                            liq = irfs_all %>% 
-                             filter(mod %in% c('liq_tp', 'liq_notp'),
+                             dplyr::filter(mod %in% c('liq_tp', 'liq_notp'),
                                     shock == 'tfp',
                                     var == 'z') %>%
                              ggplot() +
@@ -373,7 +373,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                            align = 'hv',
                            
                            ygap = irfs_zshock %>% 
-                             filter(.$var == 'y_gap') %>%
+                             dplyr::filter(.$var == 'y_gap') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -389,7 +389,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Output Gap'),
                            
                            polr = irfs_zshock %>% 
-                             filter(var == 's') %>%
+                             dplyr::filter(var == 's') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -405,7 +405,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Policy Rate'),
                            
                            bond = irfs_zshock %>% 
-                             filter(var == 'b') %>%
+                             dplyr::filter(var == 'b') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -421,7 +421,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              xlab('Quarters'),
                            
                            pi = irfs_zshock %>% 
-                             filter(var == 'pi') %>%
+                             dplyr::filter(var == 'pi') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -437,7 +437,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Inflation'),
                            
                            mon = irfs_zshock %>% 
-                             filter(var == 'm') %>%
+                             dplyr::filter(var == 'm') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -453,7 +453,7 @@ fig4 <- cowplot::plot_grid(nrow = 3, ncol = 2,
                              ylab('Money Holdings'),
                            
                            liq = irfs_zshock %>% 
-                             filter(var == 'z') %>%
+                             dplyr::filter(var == 'z') %>%
                              ggplot() +
                              geom_line(aes(x = quarter,
                                            y = value,
@@ -482,7 +482,7 @@ acplots <- pmap(.l = list(lm_ar = infl$optik,
 
 
 sink('oo')
-stargazer(infl$exolags[c(1,4,5,6,7)],
+stargazer(infl$exolags[c(1,4,5,6,7)],flip = T,
                     # type = 'latex', 
                     covariate.labels = c('Const.', paste0('\\nth{', 1:5, '} lag')), 
                     # style = 'aer',
@@ -541,7 +541,7 @@ unlink('oo')
 ##### Simulated persistence ####################################################
 
 persi <- infl$sim_persistence %>% 
-        filter(mod %in% c('gali_standard',
+        dplyr::filter(mod %in% c('gali_standard',
                           'liq_notp',
                           'liq_tp',
                           'ascardone14',
@@ -552,7 +552,7 @@ persi <- infl$sim_persistence %>%
         scale_color_viridis_d(aesthetics = 'fill', begin = .3, end = .7, option = 'B')
 
 persi_2 <- infl$sim_persistence_abs %>% 
-        filter(mod %in% c('gali_standard',
+        dplyr::filter(mod %in% c('gali_standard',
                           'liq_notp',
                           'liq_tp',
                           'ascardone14',

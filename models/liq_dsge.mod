@@ -155,21 +155,21 @@ shocks;
 
 
 % Euler eq shock, off
-var e_ee; 	stderr .000;
+var e_ee = .000;
 
 % Phillips curve shock,off
-var e_pc; 	stderr .000;
+var e_pc = .000;
 
 % regulars shocks
 @#if z_flag != 1
 % TFP shock
-var tfp_shock;	stderr 1; % for non-standard-size shock
+var tfp_shock = 1; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
-var mp_shock; 	stderr 0.25^2;
+var mp_shock = 0.25^2;
 
 % Real liq. shock
-var e_z; 		stderr 0;
+var e_z = 0;
 @#endif
 
 
@@ -177,13 +177,13 @@ var e_z; 		stderr 0;
 % shock to z
 @#if z_flag == 1
 % TFP shock
-var tfp_shock;	stderr 0; % for non-standard-size shock
+var tfp_shock = 0; % for non-standard-size shock
 
 % Mon Pol shock, 1% shock annualised (model in quarters)
-var mp_shock; 	stderr 0;
+var mp_shock = 0;
 
 % Real liq. shock
-var e_z; 		stderr 10;
+var e_z = 10;
 @#endif
 
 

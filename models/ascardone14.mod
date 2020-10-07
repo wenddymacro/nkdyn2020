@@ -241,8 +241,10 @@ steady;
 check;
 
 shocks;          
-var mp_shock; stderr 1;   
-var tfp_shock=0.25^2;
+% var mp_shock; stderr 1;   
+% var tfp_shock=0.25^2;
+var mp_shock = .25^2;   
+var tfp_shock = 1;
 var e_zeta; stderr 0;
 end;
 
