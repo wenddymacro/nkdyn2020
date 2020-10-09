@@ -133,8 +133,6 @@ pi=bet*pi(+1) + kappa*(y - flex*tfp)+ e_pc;
 % Monetary policy rule 
 s=theta*pi(+1) + e_mp;
 
-% add ygap: no change \\ change pi+1 to pi to see if model runs
-
 
 
 % AR for technology
@@ -195,7 +193,7 @@ check;
 
 stoch_simul(order=1, 		  % approx order			
 			solve_algo=2, 	    % solving algorithm			
-			irf=30,			        % IRFs horizon			
+			irf=40,			        % IRFs horizon			
 			periods=500000,     % iterations to simulate
 			drop=100000, 	      % burn-in drop			
 			replic=2500)		    % IRF iterations

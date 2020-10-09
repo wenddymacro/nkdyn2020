@@ -328,7 +328,7 @@ robs =    1*(r) + conster;
 labobs = lab + constelab;
 
 % add output gap & nominal interest rate
-y_gap = y - y-yf;
+y_gap = y - yf;
 i = r + pi(1);
 end; 
 
@@ -375,7 +375,7 @@ shocks;
   stderr 0;
   % var mp_shock;
   % stderr .25^2;
-  var mp_shock = 1;
+  var mp_shock = .25^2;
   var epinf;
   stderr 0;
   var ew;
@@ -387,7 +387,7 @@ end;
 
 stoch_simul(order = 1,
             solve_algo = 2,
-            irf=30,
+            irf=40,
             periods = 500000,
             drop = 100000,
             replic = 2500) y_gap pi i r;

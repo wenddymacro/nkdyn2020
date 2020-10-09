@@ -250,7 +250,7 @@ end;
 
 stoch_simul(order=1,
 			solve_algo=2,
-			irf = 30,
+			irf = 40,
 			periods = 500000,
 			drop = 100000,
 			replic = 2500) y_gap pi i real_interest;

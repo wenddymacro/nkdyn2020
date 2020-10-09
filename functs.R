@@ -170,7 +170,7 @@ lm_custom <- function(data, .lags, interc = F){
   
 }
 
-optilags <- function(data, .maxlags){
+optilags <- function(data, .maxlags, .type = 'drift'){
   # given a series and an upper bound, computes the optimal number of lags
   # according to BIC
   
@@ -179,9 +179,10 @@ optilags <- function(data, .maxlags){
     as.matrix()
   
   optilags <- urca::ur.df(y = data_v, 
-                    lags = .maxlags, 
-                    selectlags = 'BIC') %>% 
-    slot(., 'optilags')
+                          type = .type,
+                          lags = .maxlags, 
+                          selectlags = 'BIC') %>% 
+          slot(., 'optilags')
   
   return(optilags)
 }
@@ -288,28 +289,34 @@ plot_lags <- function(lm_ar, .name, .dir = d_plots, selector = T){
                term != 'pi.1') %>% 
         mutate(idx = sub('pi.', '', term) %>% 
                  as.numeric())
+      
+      filnam <- file.path(.dir, paste0(.name,'_lagplot.pdf'))
+      
     }else{
       tidy_lm <- tidy(lm_ar) %>% 
         filter(term != '(Intercept)') %>% 
         mutate(idx = sub('pi.', '', term) %>% 
                  as.numeric())
+      
+      filnam <- file.path(.dir, paste0(.name,'_alllagplot.pdf'))
+      
     }
     
     # max_est <- max(abs(tidy_lm$estimate))
     
     plt_lin <- tidy_lm %>% 
       ggplot() +
+      geom_ribbon(aes(x = idx,
+                      ymin = (estimate - 2*std.error),
+                      ymax = (estimate + 2*std.error)),
+                  colour = 'red',
+                  alpha = .25,
+                  size = .5) +
       geom_line(aes(x = idx,
                     y = estimate),
                 size = .8,
                 alpha = 1,
                 colour = 'black') +
-      geom_ribbon(aes(x = idx,
-                      ymin = (estimate - 2*std.error),
-                      ymax = (estimate + 2*std.error)),
-                  colour = 'red',
-                  alpha = .02,
-                  size = .01) + 
       geom_hline(yintercept = 0,
                  colour = 'black') + 
       theme_minimal() + ylab('Coefficient est.') +
@@ -331,7 +338,7 @@ plot_lags <- function(lm_ar, .name, .dir = d_plots, selector = T){
                                 nrow = 2,
                                 align = 'hv')
     
-    ggsave(filename = file.path(.dir, paste0(.name,'_lagplot.pdf')),
+    ggsave(filename = filnam,
            device = 'pdf', 
            plot = cwplt, 
            units = 'in',
@@ -534,7 +541,8 @@ pkgs <- c('tidyverse',
           'readxl',
           'R.matlab', 
           'matlabr', 
-          'tictoc')
+          'tictoc',
+          'furrr')
 # fill pkgs with names of the packages to install
 
 invisible(instant_pkgs(pkgs))

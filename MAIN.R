@@ -15,7 +15,7 @@
 #			extremely aggressive and almost passive Central Banks. For all these
 #			models and cases plot and compare IRFs.
 #
-# v0.1
+# v0.8
 
 
 # Functions
@@ -30,8 +30,9 @@ run_matlab_script('./models/models_main.m',
 toc()
 
 
-
 ##### II - AR(p*) estimates on simulated inflation ######
+# set up the parallel plan
+future::plan(multiprocess)
 tic('AR(p*) estimates')
 source('sim_pi.R')
 toc()
