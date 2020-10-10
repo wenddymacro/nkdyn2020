@@ -691,6 +691,20 @@ ggsave(filename = file.path(d_plots, 'tp_notp_z.pdf'),
        width = 8,
        height = 9*8/16)
 
+ggsave(filename = file.path(d_plots, 'gali_extreme_1.pdf'),
+       plot = plot_extraNK_1,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
+ggsave(filename = file.path(d_plots, 'gali_extreme_inf.pdf'),
+       plot = plot_extraNK_inf,
+       device = 'pdf',
+       units = 'in',
+       width = 8,
+       height = 9*8/16)
+
 
 ##### housekeeping #############################################################
 fig_list <- list(fig1, 
