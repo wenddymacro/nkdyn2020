@@ -575,14 +575,84 @@ persi_2 <- infl$sim_persistence_rsq %>%
 
 ##### Limit cases for NKDSGE ###################################################
 # TODO: needs improving!
-# plot_extrank <- irfs_all %>% 
-#         filter(mod %in% c('gali_gammainf')) %>% 
-#         ggplot(aes(x = quarter,
-#                    y = value,
-#                    group = var,
-#                    colour = mod))+
-#         geom_line() + 
-#         facet_wrap(mod + shock ~ var, scales = 'free')
+plot_extrank <- irfs_all %>%
+        filter(mod %in% c('gali_gammainf')) %>%
+        ggplot(aes(x = quarter,
+                   y = value,
+                   group = var,
+                   colour = mod))+
+        geom_line() +
+        facet_wrap(mod + shock ~ var, scales = 'free')
+
+plot_extraNK_1 <- cowplot::plot_grid(nrow = 2,
+                                     
+                                     tfp_all = irfs_all %>% 
+                                             filter(mod == 'gali_gamma1',
+                                                    shock == 'tfp') %>% 
+                                             ggplot(aes(x = quarter,
+                                                        y = value,
+                                                        group = var))+
+                                             geom_line(size = 1) +
+                                             geom_hline(yintercept = 0) +
+                                             facet_wrap(.~var, scales = 'free')+
+                                             theme_bw() + 
+                                             ggtitle('TFP shock') +
+                                             theme(legend.position = 'none', 
+                                                   axis.title = element_blank(),
+                                                   plot.title = element_text(hjust = .5)),
+                                     
+                                     mp_all = irfs_all %>% 
+                                             filter(mod == 'gali_gamma1',
+                                                    shock == 'mp') %>% 
+                                             ggplot(aes(x = quarter,
+                                                        y = value,
+                                                        group = var))+
+                                             geom_line(size = 1) +
+                                             geom_hline(yintercept = 0) +
+                                             facet_wrap(.~var, scales = 'free')+
+                                             theme_bw() +
+                                             ggtitle('Interest Rate Shock') +
+                                             theme(legend.position = 'none', 
+                                                   axis.title = element_blank(),
+                                                   plot.title = element_text(hjust = .5))
+) + 
+        cowplot::draw_figure_label(label = 'Quarters',
+                                   position = 'bottom')
+
+plot_extraNK_inf <- cowplot::plot_grid(nrow = 2,
+                                     
+                                     tfp_all = irfs_all %>% 
+                                             filter(mod == 'gali_gammainf',
+                                                    shock == 'tfp') %>% 
+                                             ggplot(aes(x = quarter,
+                                                        y = value,
+                                                        group = var))+
+                                             geom_line(size = 1) +
+                                             geom_hline(yintercept = 0) +
+                                             facet_wrap(.~var, scales = 'free')+
+                                             theme_bw() + 
+                                             ggtitle('TFP shock') +
+                                             theme(legend.position = 'none', 
+                                                   axis.title = element_blank(),
+                                                   plot.title = element_text(hjust = .5)),
+                                     
+                                     mp_all = irfs_all %>% 
+                                             filter(mod == 'gali_gammainf',
+                                                    shock == 'mp') %>% 
+                                             ggplot(aes(x = quarter,
+                                                        y = value,
+                                                        group = var))+
+                                             geom_line(size = 1) +
+                                             geom_hline(yintercept = 0) +
+                                             facet_wrap(.~var, scales = 'free')+
+                                             theme_bw() +
+                                             ggtitle('Interest Rate Shock') +
+                                             theme(legend.position = 'none', 
+                                                   axis.title = element_blank(),
+                                                   plot.title = element_text(hjust = .5))
+) + 
+        cowplot::draw_figure_label(label = 'Quarters',
+                                   position = 'bottom')
 
 ##### Save to pdf ##############################################################
 
@@ -631,7 +701,9 @@ fig_list <- list(fig1,
                  ac_plots,
                  ac_plots_p1,
                  persi,
-                 persi_2)
+                 persi_2,
+                 plot_extraNK_1,
+                 plot_extraNK_inf)
 
 rm(fig1, 
    fig2, 
@@ -641,4 +713,6 @@ rm(fig1,
    ac_plots,
    ac_plots_p1,
    persi,
-   persi_2)
+   persi_2,
+   plot_extraNK_1,
+   plot_extraNK_inf)
