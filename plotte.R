@@ -529,30 +529,60 @@ unlink('oo')
 persi <- infl$sim_persistence %>% 
         dplyr::filter(mod %in% models) %>% 
         ggplot() + 
-        geom_col(aes(x = mod, y = rho, fill = tag), position = 'dodge') +
-        theme_minimal() + ylab('Sum of coefficients')+ 
-        scale_color_viridis_d(aesthetics = 'fill', begin = .3, end = .7, option = 'B')
+        geom_col(aes(x = mod, 
+                     y = rho, 
+                     fill = tag), 
+                 position = 'dodge') +
+        theme_minimal() + 
+        ylab('Sum of coefficients')+ 
+        scale_color_viridis_d(aesthetics = 'fill', 
+                              begin = .3, 
+                              end = .7, 
+                              option = 'B')+
+        geom_text(aes(label = lags, 
+                      x = interaction(mod), 
+                      y = rho+.05, 
+                      group = tag),
+                  position = position_dodge(1))+
+        xlab('Models') + 
+        theme(legend.position = 'bottom', 
+              legend.title = element_blank(), 
+              legend.direction = 'horizontal')
 
-persi_2 <- infl$sim_persistence_rsq %>% 
-        dplyr::filter(mod %in% models) %>% 
-        ggplot() + 
-        geom_col(aes(x = mod, y = rho, fill = tag), position = 'dodge') +
-        theme_minimal() + ylab('Sum of coefficients') + 
-        scale_color_viridis_d(aesthetics = 'fill', begin = .3, end = .7, option = 'B')+
-        geom_text(aes(label = ..count.., x = mod, group = tag),
-                  position = position_stack(.5))
+persi_2 <- infl$sim_persistence_rsq %>%
+        dplyr::filter(mod %in% models) %>%
+        ggplot() +
+        geom_col(aes(x = mod, 
+                     y = rho, 
+                     fill = tag), 
+                 position = 'dodge') +
+        theme_minimal() + ylab('Sum of coefficients') +
+        scale_color_viridis_d(aesthetics = 'fill', 
+                              label = c('All lags', 'Only Sign. Lags'),
+                              begin = .5, 
+                              end = .7, 
+                              option = 'B')+
+        geom_text(aes(label = lags, 
+                      x = interaction(mod), 
+                      y = rho+.05, 
+                      group = tag),
+                  position = position_dodge(1))+
+        xlab('Models') + 
+        theme(legend.position = 'bottom', 
+              legend.title = element_blank(), 
+              legend.direction = 'horizontal')
 
 
 ##### Limit cases for NKDSGE ###################################################
 # TODO: needs improving!
-plot_extrank <- irfs_all %>% 
-        filter(mod %in% c('gali_gammainf')) %>% 
-        ggplot(aes(x = quarter,
-                   y = value,
-                   group = var,
-                   colour = mod))+
-        geom_line() + 
-        facet_wrap(mod + shock ~ var, scales = 'free')
+# plot_extrank <- irfs_all %>% 
+#         filter(mod %in% c('gali_gammainf')) %>% 
+#         ggplot(aes(x = quarter,
+#                    y = value,
+#                    group = var,
+#                    colour = mod))+
+#         geom_line() + 
+#         facet_wrap(mod + shock ~ var, scales = 'free')
 
 ##### Save to pdf ##############################################################
 
